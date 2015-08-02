@@ -7,19 +7,19 @@ using TSettings.Overrides;
 
 namespace TSettings
 {
-    public class TSettings
+    public class Settings
     {
         //The instace of the class
-        public static TSettings Default
+        public static Settings Default
         {
-            get { return _default ?? (_default = new TSettings()); }
+            get { return _default ?? (_default = new Settings()); }
         }
 
-        private static TSettings _default;
+        private static Settings _default;
         private readonly string _filename;
         private SerializableDictionary<string, object> _settingsDictionary = new SerializableDictionary<string, object>(); 
 
-        public TSettings(string filename = "settings.bin")
+        public Settings(string filename = "settings.bin")
         {
             _filename = filename;
             _default = this;
