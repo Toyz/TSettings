@@ -47,6 +47,26 @@ namespace TSettings
         }
         #endregion
 
+        #region Static methods
+
+        public static Settings Init(string filename = "settings.bin")
+        {
+            var s = new Settings(filename);
+            _default = s;
+
+            return _default;
+        }
+
+        public static Settings Init(string filename, IEncrpytion encType)
+        {
+            Encryption = encType;
+            var s = new Settings(filename);
+            _default = s;
+
+            return _default;
+        }
+        #endregion
+
         #region Load/Save
         public void Save()
         {
