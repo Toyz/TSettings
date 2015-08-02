@@ -9,6 +9,7 @@ namespace TSettings
 {
     public class TSettings
     {
+        //The instace of the class
         public static TSettings Default
         {
             get { return _default ?? (_default = new TSettings()); }
