@@ -13,7 +13,7 @@ namespace Settings_Example
 
             Settings.Encryption = new DesEncrpytion("ABCDEFGH", "ABCDEFGH");
 
-            yourage.Value = Settings.Default.Get<Decimal>("age", 0);
+            yourage.Value = Settings.Default.Get<decimal>("age", 0);
             firstname.Text = Settings.Default.Get("name", "No name set");
         }
 
