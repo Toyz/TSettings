@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
@@ -11,17 +13,28 @@ namespace TSettings
 {
     public class Settings
     {
-        //The instace of the class
+        #region Getters and setters
         public static Settings Default
         {
             get { return _default ?? (_default = new Settings()); }
         }
 
+        public object this[string key]
+        {
+            get { return Get<object>(key); }
+            set { Set(key, value); }
+        }
+
+        public static IEncrpytion Encryption { get; set; }
+        #endregion
+
+        #region Private const
         private static Settings _default;
         private readonly string _filename;
         private SerializableDictionary<string, object> _settingsDictionary = new SerializableDictionary<string, object>();
-        public static IEncrpytion Encryption { get; set; }
+        #endregion
 
+        #region Contructors
         public Settings(string filename = "settings.bin")
         {
             _filename = filename;
@@ -32,7 +45,9 @@ namespace TSettings
                 Load();
             }
         }
+        #endregion
 
+        #region Load/Save
         public void Save()
         {
             if (!string.IsNullOrWhiteSpace(Path.GetDirectoryName(_filename)) && !Directory.Exists(Path.GetDirectoryName(_filename)))
@@ -83,14 +98,9 @@ namespace TSettings
             }
 
         }
+        #endregion
 
-
-        public object this[string key]
-        {
-            get { return Get<object>(key); }
-            set { Set(key, value);}
-        }
-
+        #region Get Keys
         public T Get<T>(string key, T @default)
         {
             if (!Exist(key)) return @default;
@@ -102,13 +112,18 @@ namespace TSettings
             return @default;
         }
 
-        public T Get<T>(string key) where T : new()
+        public T Get<T>(string key)
         {
-            if (!Exist(key)) return new T();
+            if (!Exist(key))
+            {
+                throw new KeyNotFoundException();
+            }
 
             return (T)_settingsDictionary[key];
         }
+        #endregion
 
+        #region Set Keys
         public void Set<T>(string key, T @value)
         {
             if (Exist(key) && _settingsDictionary[key] != null)
@@ -125,7 +140,9 @@ namespace TSettings
 
             _settingsDictionary.Add(key, @value);
         }
+        #endregion
 
+        #region Helper Function
         public Type GetValueType(string key)
         {
             return Exist(key) ? _settingsDictionary[key].GetType() : null;
@@ -144,5 +161,6 @@ namespace TSettings
         {
             return _settingsDictionary.ContainsKey(key);
         }
+        #endregion
     }
 }

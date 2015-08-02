@@ -14,7 +14,7 @@ namespace Settings_Example
             Settings.Encryption = new DesEncrpytion("ABCDEFGH", "ABCDEFGH");
 
             yourage.Value = Settings.Default.Get<decimal>("age", 0);
-            firstname.Text = Settings.Default.Get("name", "No name set");
+            firstname.Text = Settings.Default.Get("name", "Name not found");
         }
 
         private void button1_Click(object sender, EventArgs e)
