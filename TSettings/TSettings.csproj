@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encryptions\DesEncrpytion.cs" />
+    <Compile Include="Encryptions\IEncrpytion.cs" />
     <Compile Include="Overrides\SerializableDictionary.cs" />
     <Compile Include="TSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

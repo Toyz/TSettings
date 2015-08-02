@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using TSettings;
+using TSettings.Encryptions;
 
 namespace Settings_Example
 {
@@ -9,6 +10,9 @@ namespace Settings_Example
         public Form1()
         {
             InitializeComponent();
+
+            Settings.Encryption = new DesEncrpytion("ABCDEFGH", "ABCDEFGH");
+
             yourage.Value = Settings.Default.Get<Decimal>("age", 0);
             firstname.Text = Settings.Default.Get("name", "No name set");
         }

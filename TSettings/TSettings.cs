@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
+using TSettings.Encryptions;
 using TSettings.Overrides;
 
 namespace TSettings
@@ -17,7 +19,8 @@ namespace TSettings
 
         private static Settings _default;
         private readonly string _filename;
-        private SerializableDictionary<string, object> _settingsDictionary = new SerializableDictionary<string, object>(); 
+        private SerializableDictionary<string, object> _settingsDictionary = new SerializableDictionary<string, object>();
+        public static IEncrpytion Encryption { get; set; }
 
         public Settings(string filename = "settings.bin")
         {
@@ -35,10 +38,21 @@ namespace TSettings
             if (!string.IsNullOrWhiteSpace(Path.GetDirectoryName(_filename)) && !Directory.Exists(Path.GetDirectoryName(_filename)))
                 Directory.CreateDirectory(Path.GetDirectoryName(_filename));
 
-            using (var fileStream = new FileStream(_filename, FileMode.Create))
+            using (var fileStream = File.Create(_filename))
             {
-                IFormatter bf = new BinaryFormatter();
-                bf.Serialize(fileStream, _settingsDictionary);
+                if (Encryption == null)
+                {
+                    IFormatter bf = new BinaryFormatter();
+                    bf.Serialize(fileStream, _settingsDictionary);
+                }
+                else
+                {
+                    using (var enc = new CryptoStream(fileStream, Encryption.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        var bf = new BinaryFormatter();
+                        bf.Serialize(enc, _settingsDictionary);
+                    }
+                }
             }
         }
 
@@ -46,10 +60,21 @@ namespace TSettings
         {
             try
             {
-                using (var fileStream = new FileStream(_filename, FileMode.Open))
+                using (var fileStream = File.Open(_filename, FileMode.Open))
                 {
-                    IFormatter bf = new BinaryFormatter();
-                    _settingsDictionary = (SerializableDictionary<string, object>) bf.Deserialize(fileStream);
+                    if (Encryption == null)
+                    {
+                        IFormatter bf = new BinaryFormatter();
+                        _settingsDictionary = (SerializableDictionary<string, object>) bf.Deserialize(fileStream);
+                    }
+                    else
+                    {
+                        using (var enc = new CryptoStream(fileStream, Encryption.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            var bf = new BinaryFormatter();
+                            _settingsDictionary = (SerializableDictionary<string, object>)bf.Deserialize(enc);
+                        }
+                    }
                 }
             }
             catch (Exception e)
