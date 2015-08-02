@@ -32,13 +32,13 @@ namespace TSettings
 
         public void Save()
         {
-            if (!Directory.Exists(Path.GetDirectoryName(_filename)))
+            if (!string.IsNullOrWhiteSpace(Path.GetDirectoryName(_filename)) && !Directory.Exists(Path.GetDirectoryName(_filename)))
                 Directory.CreateDirectory(Path.GetDirectoryName(_filename));
 
             using (var fileStream = new FileStream(_filename, FileMode.Create))
             {
                 IFormatter bf = new BinaryFormatter();
-                bf.Serialize(fileStream, _filename);
+                bf.Serialize(fileStream, _settingsDictionary);
             }
         }
 
