@@ -35,6 +35,10 @@ namespace TSettings
         #endregion
 
         #region Contructors
+        /// <summary>
+        /// Create a instance of TSettings
+        /// </summary>
+        /// <param name="filename">Settings File Name</param>
         public Settings(string filename = "settings.bin")
         {
             _filename = filename;
@@ -48,7 +52,11 @@ namespace TSettings
         #endregion
 
         #region Static methods
-
+        /// <summary>
+        /// Create a instance of Default for Settings.Default
+        /// </summary>
+        /// <param name="filename">Settings File Name</param>
+        /// <returns>returns Type of Settings</returns>
         public static Settings Init(string filename = "settings.bin")
         {
             var s = new Settings(filename);
@@ -57,6 +65,12 @@ namespace TSettings
             return _default;
         }
 
+        /// <summary>
+        /// Create a instance of Default for Settings.Default using an IEncryption Type
+        /// </summary>
+        /// <param name="filename">Settings File name</param>
+        /// <param name="encType">Encryption Type using IEncryption</param>
+        /// <returns>returns Type of Settings</returns>
         public static Settings Init(string filename, IEncrpytion encType)
         {
             Encryption = encType;
@@ -68,6 +82,9 @@ namespace TSettings
         #endregion
 
         #region Load/Save
+        /// <summary>
+        /// Save the settings to a file
+        /// </summary>
         public void Save()
         {
             if (!string.IsNullOrWhiteSpace(Path.GetDirectoryName(_filename)) && !Directory.Exists(Path.GetDirectoryName(_filename)))
@@ -121,6 +138,13 @@ namespace TSettings
         #endregion
 
         #region Get Keys
+        /// <summary>
+        /// Gets a object from settings using Genaric type
+        /// </summary>
+        /// <typeparam name="T">Genaric Type of class</typeparam>
+        /// <param name="key">Name of the setting</param>
+        /// <param name="default">Default value Not Null</param>
+        /// <returns>Returns genaric type of T</returns>
         public T Get<T>(string key, T @default)
         {
             if (!Exist(key)) return @default;
@@ -132,6 +156,12 @@ namespace TSettings
             return @default;
         }
 
+        /// <summary>
+        /// Gets a object from settings using Genaric type
+        /// </summary>
+        /// <typeparam name="T">Genaric Type of class</typeparam>
+        /// <param name="key">Name of the setting</param>
+        /// <returns>Returns Genairc type of the given key (Throws KeyNotFound if doesn't exist)</returns>
         public T Get<T>(string key)
         {
             if (!Exist(key))
@@ -144,6 +174,12 @@ namespace TSettings
         #endregion
 
         #region Set Keys
+        /// <summary>
+        /// Set/Update a value in the settings
+        /// </summary>
+        /// <typeparam name="T">Genaric type to save</typeparam>
+        /// <param name="key">Name of the setting</param>
+        /// <param name="value">The value to save</param>
         public void Set<T>(string key, T @value)
         {
             if (Exist(key) && _settingsDictionary[key] != null)
@@ -163,11 +199,21 @@ namespace TSettings
         #endregion
 
         #region Helper Function
+        /// <summary>
+        /// Returns the type of the given setting value
+        /// </summary>
+        /// <param name="key">Name of setting</param>
+        /// <returns>Returns Type</returns>
         public Type GetValueType(string key)
         {
             return Exist(key) ? _settingsDictionary[key].GetType() : null;
         }
 
+        /// <summary>
+        /// Deletes a key from the Settings
+        /// </summary>
+        /// <param name="key">Name of setting</param>
+        /// <returns>Boolean</returns>
         public bool Delete(string key)
         {
             if (!_settingsDictionary.ContainsKey(key)) return false;
@@ -177,6 +223,11 @@ namespace TSettings
             return true;
         }
 
+        /// <summary>
+        /// Checks if a key exist
+        /// </summary>
+        /// <param name="key">Name of setting</param>
+        /// <returns>Boolean</returns>
         public bool Exist(string key)
         {
             return _settingsDictionary.ContainsKey(key);
